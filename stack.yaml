@@ -1,0 +1,11 @@
+resolver: lts-12.4
+
+packages:
+- .
+
+extra-deps:
+- hw-simd-0.0.0.3
+- hw-hedgehog-0.1.0.2
+- hw-rankselect-0.12.0.3
+- lazy-csv-0.5.1
+- sv-0.1

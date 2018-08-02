@@ -1,0 +1,91 @@
+name:                hw-simd-cli
+version:             0.0.0.0
+github:              "haskell-works/hw-simd-cli"
+license:             BSD3
+author:              "John Ky"
+maintainer:          "newhoggy@gmail.com"
+copyright:           "2018 John Ky"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+synopsis:            SIMD library
+category:            Data, Bit, SIMD
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on Github at <https://github.com/haskell-works/hw-simd-cli#readme>
+
+tested-with:         GHC == 8.4.3, GHC == 8.2.2, GHC == 8.0.2, GHC == 7.10.3
+
+dependencies:
+- base                  >= 4.7        && < 5
+- bits-extra            >= 0.0.1.2    && < 0.1
+- bytestring            >= 0.10       && < 0.11
+- containers
+- deepseq               >= 1.4        && < 1.5
+- directory             >= 1.3.1.5    && < 1.4
+- generic-lens
+- hw-bits               >= 0.7.0.2    && < 0.8
+- hw-prim               >= 0.6.2.0    && < 0.7
+- hw-simd               >= 0.0.0.3    && < 0.1
+- lens
+- mmap                  >= 0.5.9      && < 0.6
+- optparse-applicative
+- resourcet
+- vector                >= 0.12.0.1   && < 0.13
+
+library:
+  source-dirs: src
+
+executables:
+  hw-simd:
+    main: Main.hs
+    source-dirs: app
+    ghc-options:
+    - -msse4.2
+
+ghc-options:
+- -O2 -Wall
+
+when:
+- condition: flag(sse42)
+  ghc-options:
+  - -msse4.2
+- condition: (flag(bmi2)) && (impl(ghc >=8.4.1))
+  ghc-options:
+  - -mbmi2
+  - -msse4.2
+- condition: (flag(avx2)) && (impl(ghc >=8.4.1))
+  ghc-options:
+  - -mbmi2
+  - -msse4.2
+- condition: (impl(ghc >=8.0.1))
+  ghc-options:
+  - -Wcompat
+  - -Wincomplete-record-updates
+  - -Wincomplete-uni-patterns
+  - -Wredundant-constraints
+- condition: (!impl(ghc >=8.0.1))
+  dependencies:
+    - transformers          >= 0.4        && < 0.6
+    - semigroups            >= 0.8.4      && < 0.19
+
+flags:
+  sse42:
+    description: Enable SSE 4.2 optimisations.
+    manual: false
+    default: true
+
+  bmi2:
+    description: Enable bmi2 instruction set
+    manual: false
+    default: false
+
+  avx2:
+    description: Enable avx2 instruction set
+    manual: false
+    default: false
