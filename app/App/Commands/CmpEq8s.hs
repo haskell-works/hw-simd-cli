@@ -15,9 +15,13 @@ import Options.Applicative                  hiding (columns)
 
 import qualified App.Commands.Options.Type               as Z
 import qualified App.IO                                  as IO
-import qualified Data.ByteString.Lazy                    as LBS
 import qualified HaskellWorks.Data.ByteString.Lazy       as LBS
+import qualified HaskellWorks.Data.Simd.Comparison.Avx2  as AVX2
 import qualified HaskellWorks.Data.Simd.Comparison.Stock as STOCK
+import qualified System.Exit                             as IO
+import qualified System.IO                               as IO
+
+{-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
 
 runCmpEq8s :: Z.CmpEq8sOptions -> IO ()
 runCmpEq8s opts = do
@@ -25,10 +29,21 @@ runCmpEq8s opts = do
 
   bs <- IO.readInputFile (opts ^. the @"inputFile")
 
-  LBS.writeFile (opts ^. the @"outputFile")
-    $ LBS.toLazyByteString
-    $ STOCK.cmpEqWord8s delimiter
-    $ asVector64s 64 bs
+  case opts ^. the @"method" of
+    "stock" -> do
+      IO.writeOutputFile (opts ^. the @"outputFile")
+        $ LBS.toLazyByteString
+        $ STOCK.cmpEqWord8s delimiter
+        $ asVector64s 64 bs
+    "avx2" -> do
+      IO.writeOutputFile (opts ^. the @"outputFile")
+        $ LBS.toLazyByteString
+        $ AVX2.cmpEqWord8s delimiter
+        $ asVector64s 64 bs
+    m -> do
+      IO.putStrLn $ "Unsupported method: " <> m
+      IO.exitFailure
+
 
 optsCmpEq8s :: Parser Z.CmpEq8sOptions
 optsCmpEq8s = Z.CmpEq8sOptions
@@ -48,6 +63,12 @@ optsCmpEq8s = Z.CmpEq8sOptions
         (   long "output"
         <>  short 'o'
         <>  help "Output Text file"
+        <>  metavar "STRING"
+        )
+  <*> strOption
+        (   long "method"
+        <>  short 'm'
+        <>  help "Comparison method"
         <>  metavar "STRING"
         )
 

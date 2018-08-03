@@ -11,14 +11,13 @@ import Data.Generics.Product.Any
 import Data.Semigroup            ((<>))
 import Options.Applicative       hiding (columns)
 
-import qualified App.IO               as IO
-import qualified Data.ByteString.Lazy as LBS
+import qualified App.IO as IO
 
 runCat :: CatOptions -> IO ()
 runCat opts = do
   bs <- IO.readInputFile (opts ^. the @"inputFile")
 
-  LBS.writeFile (opts ^. the @"outputFile") bs
+  IO.writeOutputFile (opts ^. the @"outputFile") bs
 
 optsCat :: Parser CatOptions
 optsCat = CatOptions

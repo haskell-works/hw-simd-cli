@@ -10,6 +10,7 @@ data CmpEq8sOptions = CmpEq8sOptions
   { inputFile  :: FilePath
   , delimiter  :: Word8
   , outputFile :: FilePath
+  , method     :: String
   } deriving (Eq, Show, Generic)
 
 data CatOptions = CatOptions
