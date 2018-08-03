@@ -2,9 +2,12 @@ resolver: lts-12.4
 
 packages:
 - .
+# - ../hw-simd
+- ../hw-prim
 
 extra-deps:
-- hw-simd-0.0.0.3
+- hw-simd-0.1.0.0
+# - hw-prim-0.6.2.2
 - hw-hedgehog-0.1.0.2
 - hw-rankselect-0.12.0.3
 - lazy-csv-0.5.1

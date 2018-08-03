@@ -31,7 +31,7 @@ dependencies:
 - generic-lens
 - hw-bits               >= 0.7.0.2    && < 0.8
 - hw-prim               >= 0.6.2.0    && < 0.7
-- hw-simd               >= 0.0.0.3    && < 0.1
+- hw-simd               >= 0.1.0.0    && < 0.2
 - lens
 - mmap                  >= 0.5.9      && < 0.6
 - optparse-applicative

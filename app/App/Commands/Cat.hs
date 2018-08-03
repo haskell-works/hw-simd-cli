@@ -36,4 +36,4 @@ optsCat = CatOptions
         )
 
 cmdCat :: Mod CommandFields (IO ())
-cmdCat = command "create-index"  $ flip info idm $ runCat <$> optsCat
+cmdCat = command "cat"  $ flip info idm $ runCat <$> optsCat
