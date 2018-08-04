@@ -17,3 +17,11 @@ data CatOptions = CatOptions
   { inputFile  :: FilePath
   , outputFile :: FilePath
   } deriving (Eq, Show, Generic)
+
+data CutOptions = CutOptions
+  { inputFile  :: FilePath
+  , delimiter  :: Word8
+  , outputFile :: FilePath
+  , fields     :: [Int]
+  , method     :: String
+  } deriving (Eq, Show, Generic)
