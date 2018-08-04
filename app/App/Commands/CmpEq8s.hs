@@ -18,6 +18,7 @@ import qualified App.IO                                  as IO
 import qualified HaskellWorks.Data.ByteString.Lazy       as LBS
 import qualified HaskellWorks.Data.Simd.Comparison.Avx2  as AVX2
 import qualified HaskellWorks.Data.Simd.Comparison.Stock as STOCK
+import qualified HaskellWorks.Simd.Cli.Comparison        as SERIAL
 import qualified System.Exit                             as IO
 import qualified System.IO                               as IO
 
@@ -40,6 +41,9 @@ runCmpEq8s opts = do
         $ LBS.toLazyByteString
         $ AVX2.cmpEqWord8s delimiter
         $ asVector64s 64 bs
+    "serial" -> do
+      IO.writeOutputFile (opts ^. the @"outputFile")
+        $ SERIAL.cmpEqWord8s delimiter bs
     m -> do
       IO.putStrLn $ "Unsupported method: " <> m
       IO.exitFailure

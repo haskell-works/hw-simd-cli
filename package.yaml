@@ -47,6 +47,8 @@ executables:
     source-dirs: app
     ghc-options:
     - -msse4.2
+    dependencies:
+      - hw-simd-cli
 
 ghc-options:
 - -O2 -Wall
