@@ -16,6 +16,8 @@ import Options.Applicative                  hiding (columns)
 
 import qualified App.Commands.Options.Type               as Z
 import qualified App.IO                                  as IO
+import qualified Data.ByteString.Lazy                    as LBS
+import qualified Data.Vector                             as DV
 import qualified HaskellWorks.Data.Simd.Comparison.Avx2  as AVX2
 import qualified HaskellWorks.Data.Simd.Comparison.Stock as STOCK
 import qualified HaskellWorks.Simd.Cli.Comparison        as SERIAL
@@ -65,6 +67,9 @@ runCut opts = do
       IO.exitFailure
 
   return ()
+
+toRows :: Z.CutCursor -> [DV.Vector LBS.ByteString]
+toRows c = []
 
 
 optsCut :: Parser Z.CutOptions
