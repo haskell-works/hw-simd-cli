@@ -108,4 +108,4 @@ optsCut = Z.CutOptions
         )
 
 cmdCut :: Mod CommandFields (IO ())
-cmdCut = command "cmpeqword8s"  $ flip info idm $ runCut <$> optsCut
+cmdCut = command "cut"  $ flip info idm $ runCut <$> optsCut

@@ -25,3 +25,9 @@ data CutOptions = CutOptions
   , fields     :: [Int]
   , method     :: String
   } deriving (Eq, Show, Generic)
+
+data WcOptions = WcOptions
+  { inputFile  :: FilePath
+  , outputFile :: FilePath
+  , method     :: String
+  } deriving (Eq, Show, Generic)
