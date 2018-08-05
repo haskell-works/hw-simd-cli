@@ -8,6 +8,7 @@ module App.Commands.Cut
 
 import App.Char
 import Control.Lens
+import Data.Char                            (ord)
 import Data.Generics.Product.Any
 import Data.Semigroup                       ((<>))
 import HaskellWorks.Data.Vector.AsVector64s
@@ -15,10 +16,10 @@ import Options.Applicative                  hiding (columns)
 
 import qualified App.Commands.Options.Type               as Z
 import qualified App.IO                                  as IO
-import qualified HaskellWorks.Data.ByteString.Lazy       as LBS
 import qualified HaskellWorks.Data.Simd.Comparison.Avx2  as AVX2
 import qualified HaskellWorks.Data.Simd.Comparison.Stock as STOCK
 import qualified HaskellWorks.Simd.Cli.Comparison        as SERIAL
+import qualified HaskellWorks.Simd.Cli.CutCursor         as Z
 import qualified System.Exit                             as IO
 import qualified System.IO                               as IO
 
@@ -29,24 +30,41 @@ runCut opts = do
   let !delimiter  = opts ^. the @"delimiter"
 
   bs <- IO.readInputFile (opts ^. the @"inputFile")
+  let wNewline = fromIntegral $ ord '\n'
 
-  case opts ^. the @"method" of
+  cursorResult <- case opts ^. the @"method" of
     "stock" -> do
-      IO.writeOutputFile (opts ^. the @"outputFile")
-        $ LBS.toLazyByteString
-        $ STOCK.cmpEqWord8s delimiter
-        $ asVector64s 64 bs
+      return $ Right Z.CutCursor
+        { Z.text        = bs
+        , Z.delimiters  = STOCK.cmpEqWord8s delimiter $ asVector64s 64 bs
+        , Z.newlines    = STOCK.cmpEqWord8s wNewline  $ asVector64s 64 bs
+        }
     "avx2" -> do
-      IO.writeOutputFile (opts ^. the @"outputFile")
-        $ LBS.toLazyByteString
-        $ AVX2.cmpEqWord8s delimiter
-        $ asVector64s 64 bs
+      return $ Right Z.CutCursor
+        { Z.text        = bs
+        , Z.delimiters  = AVX2.cmpEqWord8s delimiter $ asVector64s 64 bs
+        , Z.newlines    = AVX2.cmpEqWord8s wNewline  $ asVector64s 64 bs
+        }
     "serial" -> do
       IO.writeOutputFile (opts ^. the @"outputFile")
         $ SERIAL.cmpEqWord8s delimiter bs
+      return $ Right Z.CutCursor
+        { Z.text        = bs
+        , Z.delimiters  = asVector64s 64 $ SERIAL.cmpEqWord8s delimiter bs
+        , Z.newlines    = asVector64s 64 $ SERIAL.cmpEqWord8s wNewline  bs
+        }
     m -> do
-      IO.putStrLn $ "Unsupported method: " <> m
+      return $ Left $ "Unsupported method: " <> m
+
+  case cursorResult of
+    Right cursor -> do
+      return ()
+
+    Left msg -> do
+      IO.hPutStrLn IO.stderr msg
       IO.exitFailure
+
+  return ()
 
 
 optsCut :: Parser Z.CutOptions
