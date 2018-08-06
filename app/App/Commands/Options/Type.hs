@@ -18,6 +18,11 @@ data CatOptions = CatOptions
   , outputFile :: FilePath
   } deriving (Eq, Show, Generic)
 
+data ChunksOptions = ChunksOptions
+  { inputFile   :: FilePath
+  , chunkMethod :: String
+  } deriving (Eq, Show, Generic)
+
 data CutOptions = CutOptions
   { inputFile  :: FilePath
   , delimiter  :: Word8
