@@ -48,7 +48,9 @@ executables:
     main: Main.hs
     source-dirs: app
     ghc-options:
-    - -msse4.2
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
     dependencies:
       - hw-simd-cli
 
