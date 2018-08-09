@@ -24,11 +24,12 @@ data ChunksOptions = ChunksOptions
   } deriving (Eq, Show, Generic)
 
 data CutOptions = CutOptions
-  { inputFile  :: FilePath
-  , delimiter  :: Word8
-  , outputFile :: FilePath
-  , fields     :: [Int]
-  , method     :: String
+  { inputFile    :: FilePath
+  , delimiter    :: Word8
+  , outputFile   :: FilePath
+  , outDelimiter :: Word8
+  , fields       :: [Int]
+  , method       :: String
   } deriving (Eq, Show, Generic)
 
 data WcOptions = WcOptions
