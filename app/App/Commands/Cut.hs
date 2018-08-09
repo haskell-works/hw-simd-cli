@@ -44,17 +44,19 @@ runCut opts = do
 
   cursorResult <- case opts ^. the @"method" of
     "stock" -> do
+      let v = asVector64s 64 bs
       return $ Right Z.CutCursor
         { Z.text      = bs
-        , Z.markers   = STOCK.cmpEqWord8s delimiter $ asVector64s 64 bs
-        , Z.newlines  = STOCK.cmpEqWord8s wNewline  $ asVector64s 64 bs
+        , Z.markers   = STOCK.cmpEqWord8s delimiter v
+        , Z.newlines  = STOCK.cmpEqWord8s wNewline  v
         , Z.position  = 1
         }
     "avx2" -> do
+      let v = asVector64s 64 bs
       return $ Right Z.CutCursor
         { Z.text      = bs
-        , Z.markers   = AVX2.cmpEqWord8s delimiter $ asVector64s 64 bs
-        , Z.newlines  = AVX2.cmpEqWord8s wNewline  $ asVector64s 64 bs
+        , Z.markers   = AVX2.cmpEqWord8s delimiter v
+        , Z.newlines  = AVX2.cmpEqWord8s wNewline  v
         , Z.position  = 1
         }
     "serial" -> do
@@ -138,11 +140,11 @@ cmdCut :: Mod CommandFields (IO ())
 cmdCut = command "cut"  $ flip info idm $ runCut <$> optsCut
 
 atEnd :: Z.CutCursor -> Bool
-atEnd c = LBS.null (LBS.drop (fromIntegral (c ^. the @"position")) (c ^. the @"text"))
+atEnd c = LBS.null (LBS.drop (fromIntegral (Z.position c)) (Z.text c))
 {-# INLINE atEnd #-}
 
 toListVector :: Z.CutCursor -> [DV.Vector LBS.ByteString]
-toListVector c = if d ^. the @"position" > c ^. the @"position" && not (atEnd c)
+toListVector c = if Z.position d > Z.position c && not (atEnd c)
   then getRowBetween c d dEnd:toListVector (trim d)
   else []
   where nr = nextRow c
@@ -152,8 +154,8 @@ toListVector c = if d ^. the @"position" > c ^. the @"position" && not (atEnd c)
 
 getRowBetween :: Z.CutCursor -> Z.CutCursor -> Bool -> DV.Vector LBS.ByteString
 getRowBetween c d dEnd = DV.unfoldrN fields go c
-  where cr  = rank1 (c ^. the @"markers") (c ^. the @"position")
-        dr  = rank1 (d ^. the @"markers") (d ^. the @"position")
+  where cr  = rank1 (Z.markers c) (Z.position c)
+        dr  = rank1 (Z.markers d) (Z.position d)
         c2d = fromIntegral (dr - cr)
         fields = if dEnd then c2d +1 else c2d
         go :: Z.CutCursor -> Maybe (LBS.ByteString, Z.CutCursor)
@@ -165,10 +167,10 @@ getRowBetween c d dEnd = DV.unfoldrN fields go c
 {-# INLINE getRowBetween #-}
 
 snippet :: Z.CutCursor -> LBS.ByteString
-snippet c = LBS.take (len `max` 0) $ LBS.drop posC $ c ^. the @"text"
+snippet c = LBS.take (len `max` 0) $ LBS.drop posC $ Z.text c
   where d = nextField c
-        posC = fromIntegral $ c ^. the @"position"
-        posD = fromIntegral $ d ^. the @"position"
+        posC = fromIntegral $ Z.position c
+        posD = fromIntegral $ Z.position d
         len  = posD - posC
 {-# INLINE snippet #-}
 
@@ -176,37 +178,37 @@ nextField :: Z.CutCursor -> Z.CutCursor
 nextField cursor = cursor
   { Z.position = newPos
   }
-  where currentRank = rank1   (cursor ^. the @"markers") (cursor ^. the @"position")
-        newPos      = select1 (cursor ^. the @"markers") (currentRank + 1) - 1
+  where currentRank = rank1   (Z.markers cursor) (Z.position cursor)
+        newPos      = select1 (Z.markers cursor) (currentRank + 1) - 1
 {-# INLINE nextField #-}
 
 trim :: Z.CutCursor -> Z.CutCursor
-trim c = if c ^. the @"position" >= 512
+trim c = if Z.position c >= 512
   then trim c
-    { Z.text      = LBS.drop 512 (c ^. the @"text")
-    , Z.markers   = drop 1 (c ^. the @"markers")
-    , Z.newlines  = drop 1 (c ^. the @"newlines")
-    , Z.position  = c ^. the @"position" - 512
+    { Z.text      = LBS.drop 512 (Z.text c)
+    , Z.markers   = drop 1 (Z.markers c)
+    , Z.newlines  = drop 1 (Z.newlines c)
+    , Z.position  = Z.position c - 512
     }
   else c
 {-# INLINE trim #-}
 
 nextPosition :: Z.CutCursor -> Z.CutCursor
 nextPosition cursor = cursor
-    { Z.position = if LBS.null (LBS.drop (fromIntegral newPos) (cursor ^. the @"text"))
-        then fromIntegral (LBS.length (cursor ^. the @"text"))
+    { Z.position = if LBS.null (LBS.drop (fromIntegral newPos) (Z.text cursor))
+        then fromIntegral (LBS.length (Z.text cursor))
         else newPos
     }
-  where newPos  = cursor ^. the @"position" + 1
+  where newPos  = Z.position cursor + 1
 {-# INLINE nextPosition #-}
 
 nextRow :: Z.CutCursor -> Z.CutCursor
 nextRow cursor = cursor
-  { Z.position = if newPos > cursor ^. the @"position"
+  { Z.position = if newPos > Z.position cursor
                           then newPos
-                          else fromIntegral (LBS.length (cursor ^. the @"text"))
+                          else fromIntegral (LBS.length (Z.text cursor))
 
   }
-  where currentRank = rank1   (cursor ^. the @"newlines") (cursor ^. the @"position")
-        newPos      = select1 (cursor ^. the @"newlines") (currentRank + 1) - 1
+  where currentRank = rank1   (Z.newlines cursor) (Z.position cursor)
+        newPos      = select1 (Z.newlines cursor) (currentRank + 1) - 1
 {-# INLINE nextRow #-}
