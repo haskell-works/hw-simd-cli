@@ -14,10 +14,10 @@
   },
   "tasks": [
     {
-      "taskName": "stack build",
+      "taskName": "project build",
       "isBuildCommand": true,
       "args": [
-        "echo START_STACK_BUILD && cd ${workspaceRoot} && ./project.sh build && echo END_STACK_BUILD "
+        "echo START_PROJECT_BUILD && cd ${workspaceRoot} && ./project.sh build && echo END_PROJECT_BUILD "
       ],
       "problemMatcher": {
         "owner": "haskell",
@@ -36,9 +36,9 @@
     },
     {
       "isTestCommand": true,
-      "taskName": "stack test",
+      "taskName": "project test",
       "args": [
-        "echo START_STACK_TEST && cd ${workspaceRoot} && ./project.sh test && echo END_STACK_TEST "
+        "echo START_PROJECT_TEST && cd ${workspaceRoot} && ./project.sh test && echo END_PROJECT_TEST "
       ],
       "problemMatcher": {
         "owner": "haskell",

@@ -16,6 +16,8 @@ data CmpEq8sOptions = CmpEq8sOptions
 data CatOptions = CatOptions
   { inputFile  :: FilePath
   , outputFile :: FilePath
+  , method     :: String
+  , chunkSize  :: Int
   } deriving (Eq, Show, Generic)
 
 data ChunksOptions = ChunksOptions
