@@ -5,22 +5,30 @@ module App.Commands.Cat
   ( cmdCat
   ) where
 
-import App.Commands.Options.Type
 import Control.Lens
 import Data.Generics.Product.Any
 import Data.Semigroup            ((<>))
 import Options.Applicative       hiding (columns)
 
-import qualified App.IO as IO
+import qualified App.Commands.Options.Type as Z
+import qualified App.IO                    as IO
+import qualified System.Exit               as IO
+import qualified System.IO                 as IO
 
-runCat :: CatOptions -> IO ()
-runCat opts = do
-  bs <- IO.readInputFile (opts ^. the @"inputFile")
+runCat :: Z.CatOptions -> IO ()
+runCat opts = case opts ^. the @"method" of
+  "normal" -> do
+    bs <- IO.readInputFile (opts ^. the @"inputFile")
+    IO.writeOutputFile (opts ^. the @"outputFile") bs
+  "consistent" -> do
+    bs <- IO.readInputFileChunkedBy (opts ^. the @"chunkSize") (opts ^. the @"inputFile")
+    IO.writeOutputFile (opts ^. the @"outputFile") bs
+  method -> do
+    IO.putStrLn $ "Invalid method: " <> method
+    IO.exitWith $ IO.ExitFailure 1
 
-  IO.writeOutputFile (opts ^. the @"outputFile") bs
-
-optsCat :: Parser CatOptions
-optsCat = CatOptions
+optsCat :: Parser Z.CatOptions
+optsCat = Z.CatOptions
   <$> strOption
         (   long "input"
         <>  short 'i'
@@ -32,6 +40,18 @@ optsCat = CatOptions
         <>  short 'o'
         <>  help "Output Text file"
         <>  metavar "STRING"
+        )
+  <*> strOption
+        (   long "method"
+        <>  short 'm'
+        <>  help "Method"
+        <>  metavar "STRING"
+        )
+  <*> option auto
+        (   long "chunk-size"
+        <>  short 'c'
+        <>  help "Chunk size.  Recommended chunk-size is 32256"
+        <>  metavar "BYTES"
         )
 
 cmdCat :: Mod CommandFields (IO ())
