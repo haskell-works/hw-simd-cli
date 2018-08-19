@@ -19,6 +19,10 @@ openOutputFile filePath maybeBufferSize = allocate open close
           return handle
         close = IO.hClose
 
+openInputFile :: FilePath -> IO IO.Handle
+openInputFile "-"      = return IO.stdin
+openInputFile filePath = IO.openBinaryFile filePath IO.ReadMode
+
 readInputFile :: FilePath -> IO LBS.ByteString
 readInputFile "-"      = LBS.hGetContents IO.stdin
 readInputFile filePath = LBS.readFile filePath
