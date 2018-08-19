@@ -16,6 +16,7 @@ import Options.Applicative                  hiding (columns)
 import qualified App.Commands.Options.Type               as Z
 import qualified App.IO                                  as IO
 import qualified HaskellWorks.Data.ByteString.Lazy       as LBS
+import qualified HaskellWorks.Data.Simd.ChunkString      as CS
 import qualified HaskellWorks.Data.Simd.Comparison.Avx2  as AVX2
 import qualified HaskellWorks.Data.Simd.Comparison.Stock as STOCK
 import qualified HaskellWorks.Simd.Cli.Comparison        as SERIAL
@@ -28,26 +29,41 @@ runCmpEq8s :: Z.CmpEq8sOptions -> IO ()
 runCmpEq8s opts = do
   let !delimiter  = opts ^. the @"delimiter"
 
-  bs <- IO.readInputFile (opts ^. the @"inputFile")
+  case opts ^. the @"cmpMethod" of
+    "new-stock" -> do
+      cs <- IO.openInputFile (opts ^. the @"inputFile") >>= CS.hGetContents
 
-  case opts ^. the @"method" of
+      IO.writeOutputFile (opts ^. the @"outputFile")
+        $ LBS.toLazyByteString
+        $ STOCK.cmpEqWord8s delimiter cs
+    "new-avx2" -> do
+      cs <- IO.openInputFile (opts ^. the @"inputFile") >>= CS.hGetContents
+
+      IO.writeOutputFile (opts ^. the @"outputFile")
+        $ LBS.toLazyByteString
+        $ AVX2.cmpEqWord8s delimiter cs
     "stock" -> do
+      bs <- IO.readInputFile (opts ^. the @"inputFile")
+      let v = asVector64s 64 bs
+
       IO.writeOutputFile (opts ^. the @"outputFile")
         $ LBS.toLazyByteString
-        $ STOCK.cmpEqWord8s delimiter
-        $ asVector64s 64 bs
+        $ STOCK.cmpEqWord8s delimiter v
     "avx2" -> do
+      bs <- IO.readInputFile (opts ^. the @"inputFile")
+      let v = asVector64s 64 bs
+
       IO.writeOutputFile (opts ^. the @"outputFile")
         $ LBS.toLazyByteString
-        $ AVX2.cmpEqWord8s delimiter
-        $ asVector64s 64 bs
+        $ AVX2.cmpEqWord8s delimiter v
     "serial" -> do
+      bs <- IO.readInputFile (opts ^. the @"inputFile")
+
       IO.writeOutputFile (opts ^. the @"outputFile")
         $ SERIAL.cmpEqWord8s delimiter bs
     m -> do
       IO.hPutStrLn IO.stderr $ "Unsupported method: " <> m
       IO.exitFailure
-
 
 optsCmpEq8s :: Parser Z.CmpEq8sOptions
 optsCmpEq8s = Z.CmpEq8sOptions
@@ -70,7 +86,7 @@ optsCmpEq8s = Z.CmpEq8sOptions
         <>  metavar "STRING"
         )
   <*> strOption
-        (   long "method"
+        (   long "cmp-method"
         <>  short 'm'
         <>  help "Comparison method"
         <>  metavar "STRING"

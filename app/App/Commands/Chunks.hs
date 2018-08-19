@@ -11,7 +11,8 @@ import Control.Monad.Except
 import Data.Generics.Product.Any
 import Data.Semigroup                       ((<>))
 import HaskellWorks.Data.ByteString
-import HaskellWorks.Data.Vector.AsVector64s
+import HaskellWorks.Data.Vector.AsVector8ns
+import HaskellWorks.Data.Vector.AsVector8s
 import Options.Applicative                  hiding (columns)
 
 import qualified App.Commands.Options.Type       as Z
@@ -26,12 +27,16 @@ import qualified System.IO                       as IO
 
 runChunks :: Z.ChunksOptions -> IO ()
 runChunks opts = void $ runExceptT $ flip catchError handler $ do
-  lbs <- liftIO $ IO.readInputFile (opts ^. the @"inputFile")
+  lbs <- liftIO $ case opts ^. the @"readMethod" of
+    "classic" -> IO.readInputFileClassic (opts ^. the @"inputFile")
+    "aligned" -> IO.readInputFile        (opts ^. the @"inputFile")
+    _         -> error "Invalid read method"
 
   chunkData <- case opts ^. the @"chunkMethod" of
-        "chunked"   -> return $ foldMap Z.chunkDataOf (LBS.toChunks lbs)
-        "rechunked" -> return $ foldMap Z.chunkDataOf (toByteString <$> asVector64s 64 lbs)
-        unknown     -> throwError $ "Unknown method: " <> show unknown
+        "chunked"  -> return $ foldMap Z.chunkDataOf (LBS.toChunks lbs)
+        "regular"  -> return $ foldMap Z.chunkDataOf (toByteString <$> asVector8s  512 lbs)
+        "flexible" -> return $ foldMap Z.chunkDataOf (toByteString <$> asVector8ns 512 lbs)
+        unknown    -> throwError $ "Unknown method: " <> show unknown
 
   liftIO $ IO.putStrLn $ "Total chunks: " <> show (chunkData ^. the @"count")
   liftIO $ IO.putStrLn "Chunk histogram: "
@@ -56,6 +61,12 @@ optsChunks = Z.ChunksOptions
         (   long "chunk-method"
         <>  short 'm'
         <>  help "Chunk method"
+        <>  metavar "STRING"
+        )
+  <*> strOption
+        (   long "read-method"
+        <>  short 'r'
+        <>  help "Read method"
         <>  metavar "STRING"
         )
 

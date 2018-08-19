@@ -24,15 +24,22 @@ openInputFile "-"      = return IO.stdin
 openInputFile filePath = IO.openBinaryFile filePath IO.ReadMode
 
 readInputFile :: FilePath -> IO LBS.ByteString
-readInputFile "-"      = LBS.hGetContents IO.stdin
-readInputFile filePath = LBS.readFile filePath
+readInputFile "-"      = LBS.hGetContentsChunkedBy chunkSize IO.stdin
+readInputFile filePath = IO.openBinaryFile filePath IO.ReadMode >>= LBS.hGetContentsChunkedBy chunkSize
+
+readInputFileClassic :: FilePath -> IO LBS.ByteString
+readInputFileClassic "-"      = LBS.hGetContents IO.stdin
+readInputFileClassic filePath = IO.openBinaryFile filePath IO.ReadMode >>= LBS.hGetContents
 
 readInputFileChunkedBy :: Int -> FilePath -> IO LBS.ByteString
-readInputFileChunkedBy chunkSize "-" = LBS.hGetContentsChunkedBy chunkSize IO.stdin
-readInputFileChunkedBy chunkSize filePath = do
+readInputFileChunkedBy size "-" = LBS.hGetContentsChunkedBy size IO.stdin
+readInputFileChunkedBy size filePath = do
   h <- IO.openBinaryFile filePath IO.ReadMode
-  LBS.hGetContentsChunkedBy chunkSize h
+  LBS.hGetContentsChunkedBy size h
 
 writeOutputFile :: FilePath -> LBS.ByteString -> IO ()
 writeOutputFile "-"      bs = LBS.hPut IO.stdout bs
 writeOutputFile filePath bs = LBS.writeFile filePath bs
+
+chunkSize :: Int
+chunkSize = 4 * 1024
