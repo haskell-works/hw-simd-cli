@@ -10,10 +10,12 @@ import Data.Generics.Product.Any
 import Data.Semigroup            ((<>))
 import Options.Applicative       hiding (columns)
 
-import qualified App.Commands.Options.Type as Z
-import qualified App.IO                    as IO
-import qualified System.Exit               as IO
-import qualified System.IO                 as IO
+import qualified App.Commands.Options.Type          as Z
+import qualified App.IO                             as IO
+import qualified HaskellWorks.Data.ByteString.Lazy  as LBS
+import qualified HaskellWorks.Data.Simd.ChunkString as CS
+import qualified System.Exit                        as IO
+import qualified System.IO                          as IO
 
 runCat :: Z.CatOptions -> IO ()
 runCat opts = case opts ^. the @"method" of
@@ -21,8 +23,8 @@ runCat opts = case opts ^. the @"method" of
     bs <- IO.readInputFile (opts ^. the @"inputFile")
     IO.writeOutputFile (opts ^. the @"outputFile") bs
   "consistent" -> do
-    bs <- IO.readInputFileChunkedBy (opts ^. the @"chunkSize") (opts ^. the @"inputFile")
-    IO.writeOutputFile (opts ^. the @"outputFile") bs
+    bs <- CS.hGetContents =<< IO.openInputFile (opts ^. the @"inputFile")
+    IO.writeOutputFile (opts ^. the @"outputFile") (LBS.toLazyByteString bs)
   method -> do
     IO.putStrLn $ "Invalid method: " <> method
     IO.exitWith $ IO.ExitFailure 1

@@ -45,7 +45,7 @@ runCmpEq8s opts = do
       IO.writeOutputFile (opts ^. the @"outputFile")
         $ SERIAL.cmpEqWord8s delimiter bs
     m -> do
-      IO.putStrLn $ "Unsupported method: " <> m
+      IO.hPutStrLn IO.stderr $ "Unsupported method: " <> m
       IO.exitFailure
 
 
