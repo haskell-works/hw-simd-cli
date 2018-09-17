@@ -10,7 +10,7 @@ data CmpEq8sOptions = CmpEq8sOptions
   { inputFile  :: FilePath
   , delimiter  :: Word8
   , outputFile :: FilePath
-  , method     :: String
+  , cmpMethod  :: String
   } deriving (Eq, Show, Generic)
 
 data CatOptions = CatOptions
@@ -23,6 +23,7 @@ data CatOptions = CatOptions
 data ChunksOptions = ChunksOptions
   { inputFile   :: FilePath
   , chunkMethod :: String
+  , readMethod  :: String
   } deriving (Eq, Show, Generic)
 
 data CutOptions = CutOptions
