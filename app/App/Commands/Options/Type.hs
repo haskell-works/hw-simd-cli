@@ -17,7 +17,7 @@ data CatOptions = CatOptions
   { inputFile  :: FilePath
   , outputFile :: FilePath
   , method     :: String
-  , chunkSize  :: Int
+  , chunkSize  :: Maybe Int
   } deriving (Eq, Show, Generic)
 
 data ChunksOptions = ChunksOptions

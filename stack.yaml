@@ -5,7 +5,7 @@ packages:
 
 extra-deps:
 - hw-simd-0.1.1.1
-- hw-prim-0.6.2.12
+- hw-prim-0.6.2.17
 - hw-hedgehog-0.1.0.2
 - hw-rankselect-0.12.0.3
 - hw-rankselect-base-0.3.2.1
