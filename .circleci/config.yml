@@ -19,8 +19,8 @@ workflows:
           context: haskell-ci
 
       - haskell/build:
-          name: GHC 8.6.4
-          executor: haskell/ghc-8_6_4
+          name: GHC 8.6.5
+          executor: haskell/ghc-8_6_5
           context: haskell-ci
 
       # - github/release-cabal:
