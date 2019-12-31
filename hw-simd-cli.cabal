@@ -127,8 +127,6 @@ executable hw-simd
                         App.Commands.Options.Type
                         App.Commands.Wc
                         App.IO
-                        Paths_hw_simd_cli
-  autogen-modules:      Paths_hw_simd_cli
   hs-source-dirs:       app
   ghc-options:          -O2 -threaded -rtsopts -with-rtsopts=-N
 
