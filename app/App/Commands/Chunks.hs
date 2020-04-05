@@ -9,7 +9,6 @@ import Control.Lens
 import Control.Monad
 import Control.Monad.Except
 import Data.Generics.Product.Any
-import Data.Semigroup                       ((<>))
 import HaskellWorks.Data.ByteString
 import HaskellWorks.Data.Vector.AsVector8ns
 import HaskellWorks.Data.Vector.AsVector8s

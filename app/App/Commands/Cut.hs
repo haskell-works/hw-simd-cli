@@ -14,7 +14,6 @@ import Control.Monad.Trans.Resource
 import Data.Char                                 (ord)
 import Data.Generics.Product.Any
 import Data.List                                 (intersperse)
-import Data.Semigroup                            ((<>))
 import HaskellWorks.Data.RankSelect.Base.Rank1
 import HaskellWorks.Data.RankSelect.Base.Select1
 import HaskellWorks.Data.Vector.AsVector64s

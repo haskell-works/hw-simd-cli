@@ -9,7 +9,6 @@ module App.Commands.CmpEq8s
 import App.Char
 import Control.Lens
 import Data.Generics.Product.Any
-import Data.Semigroup                       ((<>))
 import HaskellWorks.Data.Vector.AsVector64s
 import Options.Applicative                  hiding (columns)
 

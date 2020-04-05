@@ -8,7 +8,6 @@ module App.Commands.Wc
 import Control.Lens
 import Data.Char                                 (ord)
 import Data.Generics.Product.Any
-import Data.Semigroup                            ((<>))
 import HaskellWorks.Data.Bits.PopCount.PopCount1
 import HaskellWorks.Data.Vector.AsVector64s
 import Options.Applicative                       hiding (columns)
