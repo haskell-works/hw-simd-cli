@@ -9,10 +9,10 @@ homepage:               https://github.com/haskell-works/hw-simd-cli#readme
 bug-reports:            https://github.com/haskell-works/hw-simd-cli/issues
 author:                 John Ky
 maintainer:             newhoggy@gmail.com
-copyright:              2018-2019 John Ky
+copyright:              2018-2020 John Ky
 license:                BSD-3-Clause
 license-file:           LICENSE
-tested-with:            GHC == 8.8.3, GHC == 8.6.5, GHC == 8.4.4, GHC == 8.2.2
+tested-with:            GHC == 8.8.3, GHC == 8.6.5, GHC == 8.4.4
 build-type:             Simple
 extra-source-files:     ChangeLog.md
                         README.md
@@ -36,27 +36,27 @@ flag sse42
   manual: False
   default: True
 
-common base                     { build-depends: base                     >= 4          && < 5      }
+common base                       { build-depends: base                       >= 4.11       && < 5      }
 
-common bits-extra               { build-depends: bits-extra               >= 0.0.1.2    && < 0.1    }
-common bytestring               { build-depends: bytestring               >= 0.10       && < 0.11   }
-common containers               { build-depends: containers                                         }
-common deepseq                  { build-depends: deepseq                  >= 1.4        && < 1.5    }
-common directory                { build-depends: directory                >= 1.2        && < 1.4    }
-common doctest                  { build-depends: doctest                  >= 0.16.2     && < 0.17   }
-common doctest-discover         { build-depends: doctest-discover         >= 0.2        && < 0.3    }
-common generic-lens             { build-depends: generic-lens                                       }
-common hw-bits                  { build-depends: hw-bits                  >= 0.7.0.2    && < 0.8    }
-common hw-prim                  { build-depends: hw-prim                  >= 0.6.2.8    && < 0.7    }
-common hw-rankselect-base       { build-depends: hw-rankselect-base       >= 0.3.2      && < 0.4    }
-common hw-simd                  { build-depends: hw-simd                  >= 0.1.0.0    && < 0.2    }
-common hw-simd-cli              { build-depends: hw-simd-cli                                        }
-common lens                     { build-depends: lens                                               }
-common mmap                     { build-depends: mmap                     >= 0.5.9      && < 0.6    }
-common mtl                      { build-depends: mtl                                                }
-common optparse-applicative     { build-depends: optparse-applicative                               }
-common resourcet                { build-depends: resourcet                                          }
-common vector                   { build-depends: vector                   >= 0.12.0.1   && < 0.13   }
+common bits-extra               { build-depends: bits-extra                   >= 0.0.1.2    && < 0.1    }
+common bytestring               { build-depends: bytestring                   >= 0.10       && < 0.11   }
+common containers               { build-depends: containers                                             }
+common deepseq                  { build-depends: deepseq                      >= 1.4        && < 1.5    }
+common directory                { build-depends: directory                    >= 1.2        && < 1.4    }
+common doctest                  { build-depends: doctest                      >= 0.16.2     && < 0.17   }
+common doctest-discover         { build-depends: doctest-discover             >= 0.2        && < 0.3    }
+common generic-lens             { build-depends: generic-lens                                           }
+common hw-bits                  { build-depends: hw-bits                      >= 0.7.0.2    && < 0.8    }
+common hw-prim                  { build-depends: hw-prim                      >= 0.6.2.8    && < 0.7    }
+common hw-rankselect-base       { build-depends: hw-rankselect-base           >= 0.3.2      && < 0.4    }
+common hw-simd                  { build-depends: hw-simd                      >= 0.1.0.0    && < 0.2    }
+common hw-simd-cli              { build-depends: hw-simd-cli                                            }
+common lens                     { build-depends: lens                                                   }
+common mmap                     { build-depends: mmap                         >= 0.5.9      && < 0.6    }
+common mtl                      { build-depends: mtl                                                    }
+common optparse-applicative     { build-depends: optparse-applicative                                   }
+common resourcet                { build-depends: resourcet                                              }
+common vector                   { build-depends: vector                       >= 0.12.0.1   && < 0.13   }
 
 common semigroups   { if (!impl(ghc >= 8.0.1)) { build-depends: semigroups   >=  0.8.4   && < 0.19 } }
 common transformers { if (!impl(ghc >= 8.0.1)) { build-depends: transformers >=  0.4     && < 0.6  } }
