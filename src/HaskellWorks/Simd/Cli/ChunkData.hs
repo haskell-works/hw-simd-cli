@@ -6,7 +6,6 @@ module HaskellWorks.Simd.Cli.ChunkData where
 
 import Control.Lens
 import Data.Generics.Product.Any
-import Data.Semigroup            (Semigroup (..))
 import GHC.Generics
 
 import qualified Data.ByteString as BS

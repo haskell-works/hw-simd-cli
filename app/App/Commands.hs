@@ -5,7 +5,6 @@ import App.Commands.Chunks
 import App.Commands.CmpEq8s
 import App.Commands.Cut
 import App.Commands.Wc
-import Data.Semigroup       ((<>))
 import Options.Applicative
 
 commands :: Parser (IO ())
