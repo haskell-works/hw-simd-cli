@@ -22,7 +22,7 @@ import qualified HaskellWorks.Simd.Cli.ChunkData as Z
 import qualified System.Exit                     as IO
 import qualified System.IO                       as IO
 
-{-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
+{- HLINT ignore "Redundant do" -}
 
 runChunks :: Z.ChunksOptions -> IO ()
 runChunks opts = void $ runExceptT $ flip catchError handler $ do
