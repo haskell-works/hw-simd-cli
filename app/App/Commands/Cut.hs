@@ -31,7 +31,7 @@ import qualified HaskellWorks.Simd.Cli.CutCursor         as Z
 import qualified System.Exit                             as IO
 import qualified System.IO                               as IO
 
-{-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
+{- HLINT ignore "Redundant do" -}
 
 runCut :: Z.CutOptions -> IO ()
 runCut opts = do

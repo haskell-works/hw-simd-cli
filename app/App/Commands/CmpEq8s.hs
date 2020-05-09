@@ -22,7 +22,7 @@ import qualified HaskellWorks.Simd.Cli.Comparison        as SERIAL
 import qualified System.Exit                             as IO
 import qualified System.IO                               as IO
 
-{-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
+{- HLINT ignore "Redundant do" -}
 
 runCmpEq8s :: Z.CmpEq8sOptions -> IO ()
 runCmpEq8s opts = do
