@@ -51,7 +51,7 @@ common hw-prim                  { build-depends: hw-prim                      >=
 common hw-rankselect-base       { build-depends: hw-rankselect-base           >= 0.3.2      && < 0.4    }
 common hw-simd                  { build-depends: hw-simd                      >= 0.1.0.0    && < 0.2    }
 common hw-simd-cli              { build-depends: hw-simd-cli                                            }
-common lens                     { build-depends: lens                                                   }
+common lens                     { build-depends: lens                         >= 4          && < 6      }
 common mmap                     { build-depends: mmap                         >= 0.5.9      && < 0.6    }
 common mtl                      { build-depends: mtl                                                    }
 common optparse-applicative     { build-depends: optparse-applicative                                   }
